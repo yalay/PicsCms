@@ -1,0 +1,38 @@
+hash: db74b2c3999dd284254b02b5e5d36962cece8c55cd7cbdf73be93f022af57fae
+updated: 2017-11-13T22:35:10.0277119+08:00
+imports:
+- name: github.com/BurntSushi/toml
+  version: b26d9c308763d68093482582cea63d69be07a0f0
+- name: github.com/gin-contrib/sse
+  version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
+- name: github.com/gin-gonic/gin
+  version: d459835d2b077e44f7c9b453505ee29881d5d12d
+  subpackages:
+  - binding
+  - render
+- name: github.com/go-ozzo/ozzo-routing
+  version: bd886380e6a7fe8d842c68b595fadae2dcc3bee8
+- name: github.com/golang/protobuf
+  version: 1643683e1b54a9e88ad26d98f81400c8c9d9f4f9
+  subpackages:
+  - proto
+- name: github.com/mattn/go-isatty
+  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/op/go-logging
+  version: b2cb9fa56473e98db8caba80237377e83fe44db5
+- name: github.com/ugorji/go
+  version: dd3aa7221b0c7a61c3ea1a0a252d06efa5161e3f
+  subpackages:
+  - codec
+- name: github.com/unrolled/render
+  version: 65450fb6b2d3595beca39f969c411db8f8d5c806
+- name: golang.org/x/sys
+  version: 1e2299c37cc91a509f1b12369872d27be0ce98a6
+  repo: https://github.com/golang/sys.git
+  subpackages:
+  - unix
+- name: gopkg.in/go-playground/validator.v8
+  version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+testImports: []

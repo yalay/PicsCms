@@ -4,10 +4,8 @@ import (
 	"conf"
 	"html/template"
 	"net/http"
-	"path/filepath"
 	"strconv"
 	"strings"
-	"path"
 
 	"github.com/go-ozzo/ozzo-routing"
 )
@@ -49,9 +47,9 @@ func CateHandler(c *routing.Context) error {
 	return conf.Render.HTML(c.Response, http.StatusOK, "category", map[string]interface{}{
 		"cid":       cate.Id,
 		"pageId":    pageId,
-		"cName":     cate.Title,
+		"cName":     cate.Name,
 		"cDesc":     cate.Desc,
-		"cArticles":    articles,
+		"cArticles": articles,
 		//"pagination": template.HTML(page.Html()),
 	})
 
@@ -97,28 +95,19 @@ func ArticleHandler(c *routing.Context) error {
 	}
 
 	return conf.Render.HTML(c.Response, http.StatusOK, "article", map[string]interface{}{
-		"id":        article.Id,
-		"title":     article.Title,
-		"attachNum": len(article.Attachs),
-		"pageId":    pageId,
-		"cName":     cate.Title,
-		"cid":       cate.Id,
-		"file": func() string {
-			oriPath := filepath.ToSlash(article.Attachs[pageId-1])
-			if path.IsAbs(oriPath) ||
-				strings.HasPrefix(oriPath, "http://") ||
-				strings.HasPrefix(oriPath, "https://") {
-				return oriPath
-			}
-			return "/" + oriPath
-		}(),
+		"id":         article.Id,
+		"title":      article.Title,
+		"attachNum":  len(article.Attachs),
+		"pageId":     pageId,
+		"cName":      cate.Name,
+		"cid":        cate.Id,
+		"file":       article.Attachs[pageId-1],
 		"preUrl":     page.PreUrl(),
 		"nextUrl":    page.NextUrl(),
 		"pagination": template.HTML(page.Html()),
 		"tags":       strings.Split(article.Keywords, ","),
 	})
 }
-
 
 func TagsHandler(c *routing.Context) error {
 	tag := c.Param("tag")
@@ -136,9 +125,8 @@ func TagsHandler(c *routing.Context) error {
 	return conf.Render.HTML(c.Response, http.StatusOK, "tag", map[string]interface{}{
 		"tag":       tag,
 		"cid":       99,
-		"tArticles":    totalArticles.MultiQuery(articleIds),
+		"tArticles": totalArticles.MultiQuery(articleIds),
 		//"pagination": template.HTML(page.Html()),
 	})
 	return nil
 }
-

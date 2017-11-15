@@ -18,7 +18,7 @@ var (
 
 func init() {
 	flag.IntVar(&port, "p", 8000, "listen port")
-	flag.BoolVar(&debug, "d", false, "weather debug")
+	flag.BoolVar(&debug, "d", false, "whether debug")
 	flag.Parse()
 
 	conf.InitLog("./test.log", debug)
@@ -26,8 +26,8 @@ func init() {
 
 func main() {
 	router := routing.New()
-	router.Get(`/<cate:bigbig>.html`, controllers.CateHandler)
-	router.Get(`/<cate:bigbig>-<pid:\d+>.html`, controllers.CateHandler)
+	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>.html`, controllers.CateHandler)
+	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>-<pid:\d+>.html`, controllers.CateHandler)
 	router.Get(`/article-<id:\d+>.html`, controllers.ArticleHandler)
 	router.Get(`/article-<id:\d+>-<pid:\d+>.html`, controllers.ArticleHandler)
 	router.Get(`/tags-<tag:[^(.html)\s]+>.html`, controllers.TagsHandler)
@@ -38,7 +38,7 @@ func main() {
 		"/css":  "./views/v3/css",
 		"/img":  "./views/v3/img",
 		"/js":   "./views/v3/js",
-		"/test": "./test",
+		"/static": conf.RootPath(),
 	}))
 
 	http.Handle("/", router)

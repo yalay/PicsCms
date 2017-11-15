@@ -10,7 +10,7 @@ import (
 
 type TotalCates struct {
 	cfgFile   string
-	titleIds  map[string]int
+	nameIds   map[string]int
 	cates     map[int]*models.Category
 	sortedIds []int
 }
@@ -23,7 +23,7 @@ func NewTotalCates(cfgFile string) *TotalCates {
 	return &TotalCates{
 		cfgFile:   cfgFile,
 		cates:     make(map[int]*models.Category, 0),
-		titleIds:  make(map[string]int, 0),
+		nameIds:   make(map[string]int, 0),
 		sortedIds: make([]int, 0),
 	}
 }
@@ -37,7 +37,7 @@ func (t *TotalCates) TotalSync() {
 
 	conf.Log.Debug("cates:%+v", cates[0])
 	for _, cate := range cates {
-		t.titleIds[cate.Title] = cate.Id
+		t.nameIds[cate.EngName] = cate.Id
 		t.cates[cate.Id] = cate
 		t.sortedIds = append(t.sortedIds, cate.Id)
 	}
@@ -58,8 +58,8 @@ func (t *TotalCates) SingleQuery(cateId int) *models.Category {
 	return nil
 }
 
-func  (t *TotalCates) SingleQueryByTitle(title string) *models.Category {
-	if id, ok := t.titleIds[title]; !ok {
+func (t *TotalCates) SingleQueryByTitle(title string) *models.Category {
+	if id, ok := t.nameIds[title]; !ok {
 		return nil
 	} else {
 		return t.SingleQuery(id)

@@ -1,7 +1,7 @@
 {{define "list"}}
 <li class="i_list list_n2">
-    <a target="_blank" href="" title="{{.Title}}">
-        <img class="waitpic" src="/img/loading.gif" data-original="{{.Cover}}?s=270x370" width="270" height="370" alt="{{.Title}}" style="display: inline;">
+    <a target="_blank" href="{{.Url}}" title="{{.Title}}">
+        <img class="waitpic" src="/img/loading.gif" data-original="{{attachUrl .Cover}}" width="270" height="370" alt="{{.Title}}" style="display: inline;">
     </a>
     <div class="case_info">
         <div class="meta-title"> {{.Title}} </div>

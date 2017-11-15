@@ -29,7 +29,7 @@
                         <a href="{{.preUrl}}" title="上一页" class="pre-cat"><i class="fa fa-chevron-left"></i></a>
                         <a href="{{.nextUrl}}" title="下一页" class="next-cat"><i class="fa fa-chevron-right"></i></a>
                         <div class="image_div" id="image_div">
-                            <p><a href="{{.nextUrl}}"><img src="{{.file}}" alt="{{.title}}" title="点击图片查看下一张"></a></p>
+                            <p><a href="{{.nextUrl}}"><img src="{{attachUrl .file}}" alt="{{.title}}" title="点击图片查看下一张"></a></p>
                             <div class="nav-links page_imges">{{if .pagination}}{{.pagination}}{{end}}</div>
                         </div>
 

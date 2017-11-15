@@ -3,8 +3,9 @@ package models
 type Category struct {
 	Id       int
 	SortId   int
-	Title    string
-	Desc     string
+	Name     string
+	EngName  string
 	Keywords string
+	Desc     string
 	Cover    string
 }

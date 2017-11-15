@@ -1,12 +1,11 @@
 {{define "list"}}
 <li class="i_list list_n2">
     <a target="_blank" href="" title="{{.Title}}">
-        <img class="waitpic" src="/img/loading.gif" data-original="{{.Cover}}?s=270x370" width="270" height="370" alt="{{.Remark}}" style="display: inline;">
+        <img class="waitpic" src="/img/loading.gif" data-original="{{.Cover}}?s=270x370" width="270" height="370" alt="{{.Title}}" style="display: inline;">
     </a>
     <div class="case_info">
         <div class="meta-title"> {{.Title}} </div>
-        <div class="meta-post"><i class="fa fa-clock-o"></i> {{.Addtime}} <span class="cx_like"><i class="fa fa-heart"></i> {{.Up}} </span></div>
+        <div class="meta-post"><i class="fa fa-clock-o"></i> {{.PublishTime}} </div>
     </div>
-    <div class="meta_zan xl_1"><i class="fa fa-eye"></i> {{.Hits}} </div>
 </li>
 {{end}}

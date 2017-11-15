@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"sort"
-	"sync"
 	"strings"
+	"sync"
 )
 
 const (
@@ -30,7 +30,7 @@ func (t *TotalTags) Insert(articleId int, keywords string) {
 	t.Lock()
 	for _, curKey := range curKeys {
 		if curArticleIds, ok := t.tagArticleIds[curKey]; ok {
-			curArticleIds  =append(curArticleIds, articleId)
+			curArticleIds = append(curArticleIds, articleId)
 		} else {
 			t.tagArticleIds[curKey] = []int{articleId}
 		}
@@ -38,12 +38,12 @@ func (t *TotalTags) Insert(articleId int, keywords string) {
 	t.Unlock()
 }
 
-func (t *TotalTags) Relate(keywords string, excludeId int) []int {
+func (t *TotalTags) Relate(keywords string) []int {
 	if keywords == "" {
 		return nil
 	}
 
-	idsFreq := &IdsFreq{}
+	idsFreq := NewIdsFreq()
 	curKeys := strings.Split(keywords, ",")
 	t.RLock()
 	for _, curKey := range curKeys {
@@ -56,25 +56,5 @@ func (t *TotalTags) Relate(keywords string, excludeId int) []int {
 	t.RUnlock()
 
 	sort.Sort(idsFreq)
-
-	var count int
-	topIds := idsFreq.Top(kTopMaxNum+1)
-	relateIds := make([]int, 0, kTopMaxNum)
-	for i, topId := range topIds {
-		if topId == excludeId {
-			if i < len(topIds) - 1 {
-				relateIds = append(relateIds, topIds[i+1:]...)
-			}
-			break
-		}
-
-		count++
-		if count > kTopMaxNum {
-			break
-		}
-		relateIds = append(relateIds, topId)
-	}
-
-	return relateIds
+	return idsFreq.Top(kTopMaxNum)
 }
-

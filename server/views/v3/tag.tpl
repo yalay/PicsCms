@@ -1,3 +1,4 @@
+{{define "tag"}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,3 +34,4 @@
     {{template "footer" .}}
 </body>
 </html>
+{{end}}

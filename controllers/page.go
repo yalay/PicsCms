@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"strconv"
+	"fmt"
 )
 
 /*
@@ -23,28 +24,26 @@ import (
 
 // 用于处理分页
 type Page struct {
+	ArticleId int
 	TotalNum  int
 	CurNum    int
 	SizeNum   int // 最多显示多少页码
-	UrlPrefix string
-	UrlSuffix string
 }
 
 func (p *Page) Html() string {
 	// 固定显示上一页链接和第一页链接，除非就是第一页
 	buff := bytes.Buffer{}
 	if p.CurNum == 1 {
-		buff.WriteString(`<a class="current page-numbers" href="` + p.UrlPrefix + p.UrlSuffix +
-			`">1</a>`)
+		buff.WriteString(`<a class="current page-numbers" href="` + p.ArticleUrl(1) + `">1</a>`)
 	} else {
 		if p.CurNum == 2 {
 			buff.WriteString(`<a class="prev page-numbers" href="` +
-				p.UrlPrefix + p.UrlSuffix + `"><i class="fa fa-chevron-left"></i></a>`)
+				p.ArticleUrl(1) + `"><i class="fa fa-chevron-left"></i></a>`)
 		} else {
-			buff.WriteString(`<a class="prev page-numbers" href="` + p.UrlPrefix + "-" +
-				strconv.Itoa(p.CurNum-1) + p.UrlSuffix + `"><i class="fa fa-chevron-left"></i></a>`)
+			buff.WriteString(`<a class="prev page-numbers" href="` +
+				p.ArticleUrl(p.CurNum -1) + `"><i class="fa fa-chevron-left"></i></a>`)
 		}
-		buff.WriteString(`<a class="page-numbers" href="` + p.UrlPrefix + p.UrlSuffix +
+		buff.WriteString(`<a class="page-numbers" href="` + p.ArticleUrl(1) +
 			`">1</a>`)
 	}
 
@@ -78,7 +77,7 @@ func (p *Page) Html() string {
 			buff.WriteString(`<a class="current page-numbers">` + pageText + `</a>`)
 		} else {
 			buff.WriteString(`<a class="page-numbers" href="` +
-				p.UrlPrefix + "-" + pageText + p.UrlSuffix + `">` + pageText + `</a>`)
+				p.ArticleUrl(i) + `">` + pageText + `</a>`)
 		}
 	}
 
@@ -89,13 +88,13 @@ func (p *Page) Html() string {
 	// 固定显示最后一页链接和下一页链接，除非总共就一页
 	if p.TotalNum > 1 {
 		if p.CurNum == p.TotalNum {
-			buff.WriteString(`<a class="current page-numbers" href="` + p.UrlPrefix + "-" +
-				strconv.Itoa(p.TotalNum) + p.UrlSuffix + `">` + strconv.Itoa(p.TotalNum) + `</a>`)
+			buff.WriteString(`<a class="current page-numbers" href="` + p.ArticleUrl(p.TotalNum) +
+				`">` + strconv.Itoa(p.TotalNum) + `</a>`)
 		} else {
-			buff.WriteString(`<a class="page-numbers" href="` + p.UrlPrefix + "-" +
-				strconv.Itoa(p.TotalNum) + p.UrlSuffix + `">` + strconv.Itoa(p.TotalNum) + `</a>`)
-			buff.WriteString(`<a class="next page-numbers" href="` + p.UrlPrefix + "-" +
-				strconv.Itoa(p.CurNum+1) + p.UrlSuffix + `">` + `<i class="fa fa-chevron-right"></i></a>`)
+			buff.WriteString(`<a class="page-numbers" href="` + p.ArticleUrl(p.TotalNum) +
+				`">` + strconv.Itoa(p.TotalNum) + `</a>`)
+			buff.WriteString(`<a class="next page-numbers" href="` + p.ArticleUrl(p.CurNum+1)  +
+				`">` + `<i class="fa fa-chevron-right"></i></a>`)
 		}
 	}
 
@@ -108,9 +107,9 @@ func (p *Page) PreUrl() string {
 	}
 
 	if p.CurNum == 2 {
-		return p.UrlPrefix + p.UrlSuffix
+		return p.ArticleUrl(1)
 	} else {
-		return p.UrlPrefix + "-" + strconv.Itoa(p.CurNum-1) + p.UrlSuffix
+		return p.ArticleUrl(p.CurNum-1)
 	}
 }
 
@@ -119,5 +118,13 @@ func (p *Page) NextUrl() string {
 		return "#"
 	}
 
-	return p.UrlPrefix + "-" + strconv.Itoa(p.CurNum+1) + p.UrlSuffix
+	return p.ArticleUrl(p.CurNum+1)
+}
+
+func (p *Page) ArticleUrl(pageId int) string {
+	if pageId == 0 || pageId == 1 {
+		return fmt.Sprintf("/article-%d.html", p.ArticleId)
+	} else {
+		return fmt.Sprintf("/article-%d-%d.html", p.ArticleId, pageId)
+	}
 }

@@ -5,6 +5,13 @@ type IdsFreq struct {
 	freqs map[int]int
 }
 
+func NewIdsFreq() *IdsFreq {
+	return &IdsFreq{
+		ids:make([]int, 0),
+		freqs:make(map[int]int, 0),
+	}
+}
+
 func (f *IdsFreq) Append(newIds []int) {
 	for _, newId := range newIds {
 		if num, ok := f.freqs[newId]; ok {

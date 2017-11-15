@@ -117,13 +117,29 @@ func (t *TotalArticles) SingleQuery(articleId int) *models.Article {
 		return nil
 	}
 
-	if articles, ok := t.articles[articleId]; ok {
-		return articles
+	if article, ok := t.articles[articleId]; ok {
+		return article
 	}
 	return nil
 }
 
-func (t *TotalArticles) MultiQuery(cateId, startNum, count int) []*models.Article {
+func (t *TotalArticles) MultiQuery(articleIds []int) []*models.Article {
+	if len(t.articles) == 0 || len(articleIds) == 0 {
+		return nil
+	}
+
+	var retArticles = make([]*models.Article, 0, len(articleIds))
+	for _, articleId := range articleIds {
+		article := t.SingleQuery(articleId)
+		if article != nil {
+			retArticles = append(retArticles, article)
+		}
+	}
+
+	return retArticles
+}
+
+func (t *TotalArticles) QueryByCate(cateId, startNum, count int) []*models.Article {
 	if len(t.articles) == 0 || count <= 0 {
 		return nil
 	}

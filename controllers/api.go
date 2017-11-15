@@ -28,6 +28,33 @@ func init() {
 }
 
 func CateHandler(c *routing.Context) error {
+	cateTitle := c.Param("cate")
+	cate := totalCates.SingleQueryByTitle(cateTitle)
+	if cate == nil {
+		return conf.Render.Text(c.Response,
+			http.StatusNotFound, "cate not found")
+	}
+
+	pageId, _ := strconv.Atoi(c.Param("pid"))
+	if pageId <= 0 {
+		pageId = 1
+	}
+
+	articles := totalArticles.QueryByCate(cate.Id, (pageId-1)*kArticleNumPerPage, kArticleNumPerPage)
+	if len(articles) == 0 {
+		return conf.Render.Text(c.Response,
+			http.StatusNotFound, "article not found")
+	}
+
+	return conf.Render.HTML(c.Response, http.StatusOK, "category", map[string]interface{}{
+		"cid":       cate.Id,
+		"pageId":    pageId,
+		"cName":     cate.Title,
+		"cDesc":     cate.Desc,
+		"cArticles":    articles,
+		//"pagination": template.HTML(page.Html()),
+	})
+
 	return nil
 }
 
@@ -45,7 +72,7 @@ func ArticleHandler(c *routing.Context) error {
 			http.StatusNotFound, "article not found")
 	}
 
-	if pageId >= len(article.Attachs) {
+	if pageId > len(article.Attachs) {
 		// next article
 		return nil
 	}
@@ -57,13 +84,16 @@ func ArticleHandler(c *routing.Context) error {
 
 	}
 
+	if pageId == 0 {
+		pageId = 1
+	}
+
 	attachNum := len(article.Attachs)
 	page := &Page{
+		ArticleId: articleId,
 		TotalNum:  attachNum,
 		CurNum:    pageId,
 		SizeNum:   10,
-		UrlPrefix: "",
-		UrlSuffix: "",
 	}
 
 	return conf.Render.HTML(c.Response, http.StatusOK, "article", map[string]interface{}{
@@ -74,7 +104,7 @@ func ArticleHandler(c *routing.Context) error {
 		"cName":     cate.Title,
 		"cid":       cate.Id,
 		"file": func() string {
-			oriPath := filepath.ToSlash(article.Attachs[pageId])
+			oriPath := filepath.ToSlash(article.Attachs[pageId-1])
 			if path.IsAbs(oriPath) ||
 				strings.HasPrefix(oriPath, "http://") ||
 				strings.HasPrefix(oriPath, "https://") {
@@ -88,3 +118,27 @@ func ArticleHandler(c *routing.Context) error {
 		"tags":       strings.Split(article.Keywords, ","),
 	})
 }
+
+
+func TagsHandler(c *routing.Context) error {
+	tag := c.Param("tag")
+	if tag == "" {
+		return conf.Render.Text(c.Response,
+			http.StatusBadRequest, "invalid param")
+	}
+
+	articleIds := totalArticles.totalTags.Relate(tag)
+	if len(articleIds) == 0 {
+		return conf.Render.Text(c.Response,
+			http.StatusNotFound, "article not found")
+	}
+
+	return conf.Render.HTML(c.Response, http.StatusOK, "tag", map[string]interface{}{
+		"tag":       tag,
+		"cid":       99,
+		"tArticles":    totalArticles.MultiQuery(articleIds),
+		//"pagination": template.HTML(page.Html()),
+	})
+	return nil
+}
+

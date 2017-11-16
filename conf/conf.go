@@ -17,6 +17,7 @@ var Render = render.New(render.Options{
 			"articleUrl": GenArticleUrl,
 			"attachUrl":  GenAttachUrl,
 			"cateUrl":    GenCateUrl,
+			"tagUrl":     GenTagUrl,
 		},
 	},
 })

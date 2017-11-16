@@ -35,9 +35,10 @@ func main() {
 
 	// static file
 	router.Get("/*", file.Server(file.PathMap{
-		"/css":  "./views/v3/css",
-		"/img":  "./views/v3/img",
-		"/js":   "./views/v3/js",
+		"/css":    "./views/v3/css",
+		"/img":    "./views/v3/img",
+		"/js":     "./views/v3/js",
+		"/fonts":  "./views/v3/fonts",
 		"/static": conf.RootPath(),
 	}))
 

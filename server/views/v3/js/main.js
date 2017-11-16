@@ -10,7 +10,6 @@ $(function(){
             $('.login_text').removeClass('hide');
         }
     });
-    $.post("/social/view/"+articleId);
 });
 
 // 滚动到顶端

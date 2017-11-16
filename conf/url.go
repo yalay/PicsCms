@@ -2,33 +2,41 @@ package conf
 
 import (
 	"fmt"
-	"path/filepath"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
-func GenArticleUrl(articleId, pageId int) string {
-	if pageId == 0 || pageId == 1 {
+func GenArticleUrl(articleId int, args ...int) string {
+	if len(args) == 0 || args[0] == 1 {
 		return fmt.Sprintf("/article-%d.html", articleId)
 	} else {
-		return fmt.Sprintf("/article-%d-%d.html", articleId, pageId)
+		return fmt.Sprintf("/article-%d-%d.html", articleId, args[0])
 	}
 }
 
-func GenCateUrl(name, pageId int) string {
-	if pageId == 0 || pageId == 1 {
+func GenCateUrl(name string, args ...int) string {
+	if len(args) == 0 || args[0] == 1 {
 		return fmt.Sprintf("/%s.html", name)
 	} else {
-		return fmt.Sprintf("/%s-%d.html", name, pageId)
+		return fmt.Sprintf("/%s-%d.html", name, args[0])
 	}
 }
 
 func GenAttachUrl(attachPath string) string {
 	attachPath = strings.TrimPrefix(attachPath, RootPath())
 	oriPath := filepath.ToSlash(attachPath)
-	if 	strings.HasPrefix(oriPath, "http://") ||
+	if strings.HasPrefix(oriPath, "http://") ||
 		strings.HasPrefix(oriPath, "https://") {
 		return oriPath
 	}
 	return path.Join("/static", oriPath)
+}
+
+func GenTagUrl(tag string, args ...int) string {
+	if len(args) == 0 || args[0] == 1 {
+		return fmt.Sprintf("/tags-%s.html", tag)
+	} else {
+		return fmt.Sprintf("/tags-%s-%d.html", tag, args[0])
+	}
 }

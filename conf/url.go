@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"path"
 	"strings"
-	"back/conf"
 )
 
 func GenArticleUrl(articleId, pageId int) string {
@@ -25,7 +24,7 @@ func GenCateUrl(name, pageId int) string {
 }
 
 func GenAttachUrl(attachPath string) string {
-	strings.TrimPrefix(attachPath, conf.RootPath())
+	attachPath = strings.TrimPrefix(attachPath, RootPath())
 	oriPath := filepath.ToSlash(attachPath)
 	if 	strings.HasPrefix(oriPath, "http://") ||
 		strings.HasPrefix(oriPath, "https://") {

@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"models"
 	"net/http"
+	"path"
 	"strconv"
 	"strings"
 
@@ -13,6 +14,7 @@ import (
 
 const (
 	kArticleNumPerPage = 24
+	kRelateArticleNum  = 10
 )
 
 var totalArticles *TotalArticles
@@ -56,12 +58,14 @@ func ArticleHandler(c *routing.Context) error {
 		pageId = 1
 	}
 
-	attachNum := len(article.Attachs)
+	articleHomeUrl := conf.GenArticleUrl(articleId)
+	pathExt := path.Ext(articleHomeUrl)
 	page := &Page{
-		ArticleId: articleId,
-		TotalNum:  attachNum,
+		TotalNum:  len(article.Attachs),
 		CurNum:    pageId,
-		SizeNum:   10,
+		SizeNum:   kRelateArticleNum,
+		UrlPrefix: strings.TrimSuffix(articleHomeUrl, pathExt),
+		UrlSuffix: pathExt,
 	}
 
 	return conf.Render.HTML(c.Response, http.StatusOK, "article", map[string]interface{}{
@@ -102,8 +106,8 @@ func ArticleHandler(c *routing.Context) error {
 }
 
 func CateHandler(c *routing.Context) error {
-	cateTitle := c.Param("cate")
-	cate := totalCates.SingleQueryByTitle(cateTitle)
+	cateName := c.Param("cate")
+	cate := totalCates.SingleQueryByName(cateName)
 	if cate == nil {
 		return conf.Render.Text(c.Response,
 			http.StatusNotFound, "cate not found")
@@ -120,6 +124,16 @@ func CateHandler(c *routing.Context) error {
 			http.StatusNotFound, "article not found")
 	}
 
+	cateHomeUrl := conf.GenCateUrl(cateName)
+	pathExt := path.Ext(cateHomeUrl)
+	page := &Page{
+		TotalNum:  totalArticles.SumByCate(cate.Id),
+		CurNum:    pageId,
+		SizeNum:   kArticleNumPerPage,
+		UrlPrefix: strings.TrimSuffix(cateHomeUrl, pathExt),
+		UrlSuffix: pathExt,
+	}
+
 	return conf.Render.HTML(c.Response, http.StatusOK, "category", map[string]interface{}{
 		"cid":        cate.Id,
 		"pageId":     pageId,
@@ -127,7 +141,7 @@ func CateHandler(c *routing.Context) error {
 		"cName":      cate.Name,
 		"cDesc":      cate.Desc,
 		"cArticles":  articles,
-		//"pagination": template.HTML(page.Html()),
+		"pagination": template.HTML(page.Html()),
 	})
 
 	return nil
@@ -140,17 +154,28 @@ func TagsHandler(c *routing.Context) error {
 			http.StatusBadRequest, "invalid param")
 	}
 
-	articleIds := totalArticles.totalTags.Relate(tag)
+	articleIds := totalArticles.totalTags.Relate(tag, kArticleNumPerPage)
 	if len(articleIds) == 0 {
 		return conf.Render.Text(c.Response,
 			http.StatusNotFound, "article not found")
 	}
 
+	tagHomeUrl := conf.GenTagUrl(tag)
+	pathExt := path.Ext(tagHomeUrl)
+	page := &Page{
+		TotalNum:  1,
+		CurNum:    1,
+		SizeNum:   kArticleNumPerPage,
+		UrlPrefix: strings.TrimSuffix(tagHomeUrl, pathExt),
+		UrlSuffix: pathExt,
+	}
+
 	return conf.Render.HTML(c.Response, http.StatusOK, "tag", map[string]interface{}{
-		"tag":       tag,
-		"cid":       99,
-		"tArticles": totalArticles.MultiQuery(articleIds),
-		//"pagination": template.HTML(page.Html()),
+		"tag":        tag,
+		"cid":        99,
+		"totalCates": totalCates.TotalQuery(),
+		"tArticles":  totalArticles.MultiQuery(articleIds),
+		"pagination": template.HTML(page.Html()),
 	})
 	return nil
 }

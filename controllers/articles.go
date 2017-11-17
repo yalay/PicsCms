@@ -188,6 +188,13 @@ func (t *TotalArticles) ClosestArticles(cateId, articleId int) (preId, nextId in
 	}
 }
 
+func (t *TotalArticles) SumByCate(cateId int) int {
+	if articles, ok := t.sortedIdsByCate[cateId]; ok {
+		return len(articles)
+	}
+	return 0
+}
+
 func readArticleConfig(cfgFile string) (*models.Article, error) {
 	article := &models.Article{}
 	_, err := toml.DecodeFile(cfgFile, article)

@@ -38,7 +38,7 @@ func (t *TotalTags) Insert(articleId int, keywords string) {
 	t.Unlock()
 }
 
-func (t *TotalTags) Relate(keywords string) []int {
+func (t *TotalTags) Relate(keywords string, args ...int) []int {
 	if keywords == "" {
 		return nil
 	}
@@ -56,5 +56,9 @@ func (t *TotalTags) Relate(keywords string) []int {
 	t.RUnlock()
 
 	sort.Sort(idsFreq)
-	return idsFreq.Top(kTopMaxNum)
+	if len(args) == 0 {
+		return idsFreq.Top(kTopMaxNum)
+	}
+
+	return idsFreq.Top(args[0])
 }

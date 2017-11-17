@@ -58,8 +58,8 @@ func (t *TotalCates) SingleQuery(cateId int) *models.Category {
 	return nil
 }
 
-func (t *TotalCates) SingleQueryByTitle(title string) *models.Category {
-	if id, ok := t.nameIds[title]; !ok {
+func (t *TotalCates) SingleQueryByName(name string) *models.Category {
+	if id, ok := t.nameIds[name]; !ok {
 		return nil
 	} else {
 		return t.SingleQuery(id)

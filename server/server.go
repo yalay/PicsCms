@@ -28,11 +28,11 @@ func main() {
 	router := routing.New()
 	router.Get(`/`, controllers.HomeHandler)
 	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>.html`, controllers.CateHandler)
-	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>-<pid:\d+>.html`, controllers.CateHandler)
+	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>-<pid:[pn\d]+>.html`, controllers.CateHandler)
 	router.Get(`/article-<id:\d+>.html`, controllers.ArticleHandler)
-	router.Get(`/article-<id:\d+>-<pid:\d+>.html`, controllers.ArticleHandler)
+	router.Get(`/article-<id:\d+>-<pid:[pn\d]+>.html`, controllers.ArticleHandler)
 	router.Get(`/tags-<tag:[^(.html)\s]+>.html`, controllers.TagsHandler)
-	router.Get(`/tags-<tag:[^-\s]+>-<pid:\d+>.html`, controllers.TagsHandler)
+	router.Get(`/tags-<tag:[^-\s]+>-<pid:[pn\d]+>.html`, controllers.TagsHandler)
 
 	// static file
 	router.Get("/*", file.Server(file.PathMap{

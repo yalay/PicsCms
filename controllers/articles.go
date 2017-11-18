@@ -92,7 +92,7 @@ func (t *TotalArticles) TotalSync() {
 			}
 
 			newArticles[article.Id] = article
-			if curSortedIds, ok := newSortedIds[article.Cid]; ok {
+			if curSortedIds, ok := newSortedIds[article.Cid]; !ok {
 				newSortedIds[article.Cid] = []int{article.Id}
 			} else {
 				newSortedIds[article.Cid] = append(curSortedIds, article.Id)
@@ -104,7 +104,7 @@ func (t *TotalArticles) TotalSync() {
 
 	if len(newSortedIds) != 0 {
 		for _, ids := range newSortedIds {
-			sort.Ints(ids)
+			sort.Sort(sort.Reverse(sort.IntSlice(ids)))
 		}
 	}
 
@@ -176,7 +176,7 @@ func (t *TotalArticles) ClosestArticles(cateId, articleId int) (preId, nextId in
 		return -1, -1
 	}
 
-	curIndex := sort.SearchInts(sortedIds, articleId)
+	curIndex := reverseBinarySearch(sortedIds, articleId)
 	if curIndex == 0 {
 		return -1, sortedIds[1]
 	}
@@ -203,4 +203,23 @@ func readArticleConfig(cfgFile string) (*models.Article, error) {
 	}
 
 	return article, nil
+}
+
+func reverseBinarySearch(values []int, value int) int {
+	start_index := 0
+	end_index := len(values) - 1
+	for start_index <= end_index {
+		median := (start_index + end_index) / 2
+		if values[median] > value {
+			start_index = median + 1
+		} else {
+			end_index = median - 1
+		}
+	}
+
+	if start_index == len(values) || values[start_index] != value {
+		return -1
+	} else {
+		return start_index
+	}
 }

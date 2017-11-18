@@ -104,7 +104,7 @@ func (p *Page) Html() string {
 
 func (p *Page) PreUrl() string {
 	if p.CurNum == 1 {
-		return "#"
+		return p.UrlPrefix + "-p" + p.UrlSuffix
 	}
 
 	if p.CurNum == 2 {
@@ -116,7 +116,7 @@ func (p *Page) PreUrl() string {
 
 func (p *Page) NextUrl() string {
 	if p.CurNum == p.TotalNum {
-		return "#"
+		return p.UrlPrefix + "-n" + p.UrlSuffix
 	}
 
 	return p.UrlPrefix + "-" + strconv.Itoa(p.CurNum+1) + p.UrlSuffix

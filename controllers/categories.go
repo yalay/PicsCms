@@ -4,8 +4,6 @@ import (
 	"conf"
 	"models"
 	"sort"
-
-	"github.com/BurntSushi/toml"
 )
 
 type TotalCates struct {
@@ -19,9 +17,8 @@ type CateConfig struct {
 	Cates []*models.Category
 }
 
-func NewTotalCates(cfgFile string) *TotalCates {
+func NewTotalCates() *TotalCates {
 	return &TotalCates{
-		cfgFile:   cfgFile,
 		cates:     make(map[int]*models.Category, 0),
 		nameIds:   make(map[string]int, 0),
 		sortedIds: make([]int, 0),
@@ -29,14 +26,7 @@ func NewTotalCates(cfgFile string) *TotalCates {
 }
 
 func (t *TotalCates) TotalSync() {
-	cates, err := readCateConfig(t.cfgFile)
-	if err != nil {
-		conf.Log.Error(err.Error())
-		return
-	}
-
-	conf.Log.Debug("cates:%+v", cates[0])
-	for _, cate := range cates {
+	for _, cate := range conf.TotalCates() {
 		t.nameIds[cate.EngName] = cate.Id
 		t.cates[cate.Id] = cate
 		t.sortedIds = append(t.sortedIds, cate.Id)
@@ -78,14 +68,4 @@ func (t *TotalCates) TotalQuery() []*models.Category {
 		}
 	}
 	return totalCates
-}
-
-func readCateConfig(cfgFile string) ([]*models.Category, error) {
-	cateCfg := &CateConfig{}
-	_, err := toml.DecodeFile(cfgFile, cateCfg)
-	if err != nil {
-		return nil, err
-	}
-
-	return cateCfg.Cates, nil
 }

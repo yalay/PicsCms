@@ -15,7 +15,7 @@
     <div class="site-wrap hide">
         <ul class="bxslider">
             {{range .sliderArticles}}
-            <li><a target="_blank" href="{{articleUrl .Id}}"><img src="{{.Cover}}" title="{{.Title}}"></a></li>
+            <li><a target="_blank" href="{{articleUrl .Id}}"><img src="{{attachUrl .Cover}}" title="{{.Title}}" width="590px" height="394px"></a></li>
             {{end}}
         </ul>
     </div>

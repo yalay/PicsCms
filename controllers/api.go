@@ -24,7 +24,7 @@ func init() {
 	totalArticles = NewTotalArticles(conf.RootPath())
 	go totalArticles.TotalSync()
 
-	totalCates = NewTotalCates(conf.CateProfilePath())
+	totalCates = NewTotalCates()
 	go totalCates.TotalSync()
 }
 
@@ -36,7 +36,10 @@ func HomeHandler(c *routing.Context) error {
 	}
 
 	return conf.Render.HTML(c.Response, http.StatusOK, "home", map[string]interface{}{
-		"cid":            90,
+		"webName":        conf.WebName(),
+		"webKeywords":    conf.WebKeywords(),
+		"webDesc":        conf.WebDesc(),
+		"cid":            0,
 		"totalCates":     cates,
 		"sliderArticles": totalArticles.QueryByCate(2, 0, 5),
 		"cateArticles":   cateArticles,
@@ -45,21 +48,31 @@ func HomeHandler(c *routing.Context) error {
 
 func ArticleHandler(c *routing.Context) error {
 	articleId, _ := strconv.Atoi(c.Param("id"))
-	pageId, _ := strconv.Atoi(c.Param("pid"))
-	if articleId <= 0 || pageId < 0 {
-		return conf.Render.Text(c.Response,
-			http.StatusBadRequest, "invalid param")
-	}
-
 	article := totalArticles.SingleQuery(articleId)
 	if article == nil || len(article.Attachs) == 0 {
 		return conf.Render.Text(c.Response,
 			http.StatusNotFound, "article not found")
 	}
 
-	if pageId > len(article.Attachs) {
-		// next article
+	oriPid := c.Param("pid")
+	if oriPid == "p" || oriPid == "n" {
+		// 上一篇或者下一篇
+		preId, nextId := totalArticles.ClosestArticles(article.Cid, articleId)
+		switch oriPid {
+		case "p":
+			preUrl := conf.GenArticleUrl(preId)
+			http.Redirect(c.Response, c.Request, preUrl, http.StatusFound)
+		case "n":
+			nextUrl := conf.GenArticleUrl(nextId)
+			http.Redirect(c.Response, c.Request, nextUrl, http.StatusFound)
+		}
 		return nil
+	}
+
+	pageId, _ := strconv.Atoi(oriPid)
+	if articleId <= 0 || pageId < 0 {
+		return conf.Render.Text(c.Response,
+			http.StatusBadRequest, "invalid param")
 	}
 
 	cate := totalCates.SingleQuery(article.Cid)
@@ -86,6 +99,7 @@ func ArticleHandler(c *routing.Context) error {
 	return conf.Render.HTML(c.Response, http.StatusOK, "article", map[string]interface{}{
 		"id":          article.Id,
 		"title":       article.Title,
+		"keywords":    article.Keywords,
 		"attachNum":   len(article.Attachs),
 		"pageId":      pageId,
 		"publishTime": article.PublishTime.Format("2006-01-02 15:04"),
@@ -142,7 +156,7 @@ func CateHandler(c *routing.Context) error {
 	cateHomeUrl := conf.GenCateUrl(cateName)
 	pathExt := path.Ext(cateHomeUrl)
 	page := &Page{
-		TotalNum:  totalArticles.SumByCate(cate.Id),
+		TotalNum:  totalArticles.SumByCate(cate.Id)/kArticleNumPerPage + 1,
 		CurNum:    pageId,
 		SizeNum:   kArticleNumPerPage,
 		UrlPrefix: strings.TrimSuffix(cateHomeUrl, pathExt),
@@ -151,6 +165,7 @@ func CateHandler(c *routing.Context) error {
 
 	return conf.Render.HTML(c.Response, http.StatusOK, "category", map[string]interface{}{
 		"cid":        cate.Id,
+		"cKeywords":  cate.Keywords,
 		"pageId":     pageId,
 		"totalCates": totalCates.TotalQuery(),
 		"cName":      cate.Name,
@@ -186,6 +201,7 @@ func TagsHandler(c *routing.Context) error {
 	}
 
 	return conf.Render.HTML(c.Response, http.StatusOK, "tag", map[string]interface{}{
+		"webName":    conf.WebName(),
 		"tag":        tag,
 		"cid":        99,
 		"totalCates": totalCates.TotalQuery(),

@@ -8,6 +8,10 @@ import (
 )
 
 func GenArticleUrl(articleId int, args ...int) string {
+	if articleId < 0 {
+		return "/"
+	}
+
 	if len(args) == 0 || args[0] == 1 {
 		return fmt.Sprintf("/article-%d.html", articleId)
 	} else {
@@ -30,7 +34,7 @@ func GenAttachUrl(attachPath string) string {
 		strings.HasPrefix(oriPath, "https://") {
 		return oriPath
 	}
-	return path.Join("/attachs", oriPath)
+	return "//" + path.Join("cdn.tengmm.com", oriPath)
 }
 
 func GenTagUrl(tag string, args ...int) string {

@@ -2,8 +2,11 @@ package conf
 
 import (
 	"html/template"
+	"models"
 	"path/filepath"
+	"fmt"
 
+	"github.com/BurntSushi/toml"
 	"github.com/unrolled/render"
 )
 
@@ -23,19 +26,42 @@ var Render = render.New(render.Options{
 })
 
 type Config struct {
-	RootPath    string
-	ProfileName string
+	WebName           string
+	WebKeywords       string
+	WebDesc           string
+	RootPath          string
+	AttachProfileName string
+	Cates             []*models.Category
+}
+
+func init() {
+	_, err := toml.DecodeFile("sys.profile", &config)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(config)
+}
+
+func WebName() string {
+	return config.WebName
+}
+
+func WebKeywords() string {
+	return config.WebKeywords
+}
+
+func WebDesc() string {
+	return config.WebDesc
 }
 
 func RootPath() string {
-	return "test"
-	//return config.RootPath
+	return config.RootPath
 }
 
 func ArticleProfileName() string {
-	return ".profile"
+	return config.AttachProfileName
 }
 
-func CateProfilePath() string {
-	return "cate.profile"
+func TotalCates() []*models.Category {
+	return config.Cates
 }

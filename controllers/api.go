@@ -28,6 +28,21 @@ func init() {
 	go totalCates.TotalSync()
 }
 
+func HomeHandler(c *routing.Context) error {
+	cates := totalCates.TotalQuery()
+	cateArticles := make(map[int][]*models.Article, len(cates))
+	for _, cate := range cates {
+		cateArticles[cate.Id] = totalArticles.QueryByCate(cate.Id, 0, 5)
+	}
+
+	return conf.Render.HTML(c.Response, http.StatusOK, "home", map[string]interface{}{
+		"cid":            90,
+		"totalCates":     cates,
+		"sliderArticles": totalArticles.QueryByCate(2, 0, 5),
+		"cateArticles":   cateArticles,
+	})
+}
+
 func ArticleHandler(c *routing.Context) error {
 	articleId, _ := strconv.Atoi(c.Param("id"))
 	pageId, _ := strconv.Atoi(c.Param("pid"))

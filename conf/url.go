@@ -30,7 +30,7 @@ func GenAttachUrl(attachPath string) string {
 		strings.HasPrefix(oriPath, "https://") {
 		return oriPath
 	}
-	return path.Join("/static", oriPath)
+	return path.Join("/attachs", oriPath)
 }
 
 func GenTagUrl(tag string, args ...int) string {

@@ -33,7 +33,7 @@ func (t *TotalCates) TotalSync() {
 	}
 
 	sort.Ints(t.sortedIds)
-	conf.Log.Debug("TotalCates:%+v", t)
+	//conf.Log.Debug("TotalCates:%+v", t)
 }
 
 func (t *TotalCates) SingleQuery(cateId int) *models.Category {

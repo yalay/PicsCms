@@ -35,13 +35,16 @@ func main() {
 	router.Get(`/tags-<tag:[^-\s]+>-<pid:[pn\d]+>.html`, controllers.TagsHandler)
 
 	// static file
-	router.Get("/*", file.Server(file.PathMap{
+	router.Get("/<static:(css|img|js|fonts|attachs)>/*", file.Server(file.PathMap{
 		"/css":     "./views/v3/css",
 		"/img":     "./views/v3/img",
 		"/js":      "./views/v3/js",
 		"/fonts":   "./views/v3/fonts",
 		"/attachs": "./attachs",
 	}))
+
+	// 404 error
+	router.NotFound(controllers.ErrorHandler)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)

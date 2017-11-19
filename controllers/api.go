@@ -28,6 +28,11 @@ func init() {
 	go totalCates.TotalSync()
 }
 
+func ErrorHandler(c *routing.Context) error {
+	http.Redirect(c.Response, c.Request, "/", http.StatusMovedPermanently)
+	return nil
+}
+
 func HomeHandler(c *routing.Context) error {
 	cates := totalCates.TotalQuery()
 	cateArticles := make(map[int][]*models.Article, len(cates))

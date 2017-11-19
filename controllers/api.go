@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	kArticleNumPerPage = 24
+	kArticleNumPerPage = 25
 	kRelateArticleNum  = 10
 )
 

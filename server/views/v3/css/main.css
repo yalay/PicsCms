@@ -1,5 +1,5 @@
 /* 基本css */
-body{font-family:"Microsoft Yahei";margin:0 auto;font-size:14px;color:#333}
+body{font-family:"Microsoft Yahei";background:#f0f0f0;margin:0 auto;font-size:14px;color:#333}
 *{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;margin:0;padding:0}
 :after,:before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
 html{font-size:10px;-webkit-tap-highlight-color:transparent}
@@ -42,7 +42,7 @@ a,a:hover{text-decoration:none;color:#f66;transition:.5s;-moz-transition:.5s;-we
 .header_menu>ul>li.megamenu>.sub-menu .sub-menu li{height:30px;line-height:30px}
 .header_menu>ul>li.megamenu>.sub-menu .sub-menu a{font-size:13px;color:#acacac}
 .header_menu>ul>li.megamenu>.sub-menu .sub-menu a:hover{color:#ff6869}
-.body_top{padding-top: 90px}
+.body_top{padding-top: 64px}
 .nav_headertop {position: fixed;left:0;top:0;width:100%;transition: top .5s;z-index: 99;opacity: 0.98}
 .home-filter{width:100%;max-width:1180px;margin:0 auto 10px;position:relative;overflow:hidden;}
 .h-screen-wrap{position:relative;float:left;max-width:900px;width:-moz-calc(100% - 280px);width:-webkit-calc(100% - 280px);width:calc(100% - 280px);overflow:hidden}

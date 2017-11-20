@@ -38,6 +38,7 @@ func main() {
 
 	// static file
 	router.Get("/favicon.ico", file.Content("./views/v3/img/favicon.ico"))
+	router.Get("/robots.txt", file.Content("./robots.txt"))
 	router.Get("/<static:(css|img|js|fonts|attachs)>/*", file.Server(file.PathMap{
 		"/css":     "./views/v3/css",
 		"/img":     "./views/v3/img",

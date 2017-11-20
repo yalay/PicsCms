@@ -5,6 +5,7 @@
     {{template "top"}}
     <title>{{.title}} - {{.keywords}}</title>
     <meta name="keywords" content="{{.keywords}}">
+    <link rel="canonical" href="{{articleUrl .id}}"/>
 </head>
 <body class="home blog body_top">
     {{template "header" .}}

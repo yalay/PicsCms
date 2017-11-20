@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"conf"
+	"fmt"
 	"html/template"
 	"models"
 	"net/http"
@@ -28,9 +29,14 @@ func init() {
 	go totalCates.TotalSync()
 }
 
-func ErrorHandler(c *routing.Context) error {
-	http.Redirect(c.Response, c.Request, "/", http.StatusMovedPermanently)
-	return nil
+func ErrorHandler(c *routing.Context, err error) error {
+	return conf.Render.HTML(c.Response, http.StatusOK, "error", map[string]interface{}{
+		"webName":    conf.WebName(),
+		"error":      err.Error(),
+		"cid":        100,
+		"totalCates": totalCates.TotalQuery(),
+		"tArticles":  totalArticles.QueryByCate(2, 5, 10),
+	})
 }
 
 func HomeHandler(c *routing.Context) error {
@@ -55,8 +61,7 @@ func ArticleHandler(c *routing.Context) error {
 	articleId, _ := strconv.Atoi(c.Param("id"))
 	article := totalArticles.SingleQuery(articleId)
 	if article == nil || len(article.Attachs) == 0 {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "article not found")
+		return fmt.Errorf("article not found:%d", articleId)
 	}
 
 	oriPid := c.Param("pid")
@@ -76,15 +81,12 @@ func ArticleHandler(c *routing.Context) error {
 
 	pageId, _ := strconv.Atoi(oriPid)
 	if articleId <= 0 || pageId < 0 {
-		return conf.Render.Text(c.Response,
-			http.StatusBadRequest, "invalid param")
+		return fmt.Errorf("invalid param: articleId:%d,pageId:%d", articleId, pageId)
 	}
 
 	cate := totalCates.SingleQuery(article.Cid)
 	if cate == nil {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "category not found")
-
+		return fmt.Errorf("category not found: cid:%d", article.Cid)
 	}
 
 	if pageId == 0 {
@@ -93,8 +95,7 @@ func ArticleHandler(c *routing.Context) error {
 
 	totalNum := len(article.Attachs)
 	if pageId > totalNum {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "article page id not found")
+		return fmt.Errorf("article page id not found: %d", pageId)
 	}
 
 	articleHomeUrl := conf.GenArticleUrl(articleId)
@@ -149,8 +150,7 @@ func CateHandler(c *routing.Context) error {
 	cateName := c.Param("cate")
 	cate := totalCates.SingleQueryByName(cateName)
 	if cate == nil {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "cate not found")
+		return fmt.Errorf("cate not found: %s", cateName)
 	}
 
 	pageId, _ := strconv.Atoi(c.Param("pid"))
@@ -160,14 +160,12 @@ func CateHandler(c *routing.Context) error {
 
 	totalNum := totalArticles.SumByCate(cate.Id)/kArticleNumPerPage + 1
 	if pageId > totalNum {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "category page id not found")
+		return fmt.Errorf("category page id not found: %d", pageId)
 	}
 
 	articles := totalArticles.QueryByCate(cate.Id, (pageId-1)*kArticleNumPerPage, kArticleNumPerPage)
 	if len(articles) == 0 {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "article not found")
+		return fmt.Errorf("article not found")
 	}
 
 	cateHomeUrl := conf.GenCateUrl(cateName)
@@ -190,21 +188,17 @@ func CateHandler(c *routing.Context) error {
 		"cArticles":  articles,
 		"pagination": template.HTML(page.Html()),
 	})
-
-	return nil
 }
 
 func TagsHandler(c *routing.Context) error {
 	tag := c.Param("tag")
 	if tag == "" {
-		return conf.Render.Text(c.Response,
-			http.StatusBadRequest, "invalid param")
+		return fmt.Errorf("empty param")
 	}
 
 	articleIds := totalArticles.totalTags.Relate(tag, kArticleNumPerPage)
 	if len(articleIds) == 0 {
-		return conf.Render.Text(c.Response,
-			http.StatusNotFound, "article not found")
+		return fmt.Errorf("empty article by tag: %s", tag)
 	}
 
 	tagHomeUrl := conf.GenTagUrl(tag)
@@ -225,5 +219,4 @@ func TagsHandler(c *routing.Context) error {
 		"tArticles":  totalArticles.MultiQuery(articleIds),
 		"pagination": template.HTML(page.Html()),
 	})
-	return nil
 }

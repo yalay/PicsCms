@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/go-ozzo/ozzo-routing"
+	"github.com/go-ozzo/ozzo-routing/fault"
 	"github.com/go-ozzo/ozzo-routing/file"
 )
 
@@ -26,6 +27,8 @@ func init() {
 
 func main() {
 	router := routing.New()
+	router.Use(fault.ErrorHandler(nil, controllers.ErrorHandler))
+
 	router.Get(`/`, controllers.HomeHandler)
 	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>.html`, controllers.CateHandler)
 	router.Get(`/<cate:(bigbreast|naked|hotass|bras)>-<pid:[pn\d]+>.html`, controllers.CateHandler)
@@ -46,9 +49,6 @@ func main() {
 		"/fonts":   "./views/v3/fonts",
 		"/attachs": "./attachs",
 	}))
-
-	// 404 error
-	router.NotFound(controllers.ErrorHandler)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)

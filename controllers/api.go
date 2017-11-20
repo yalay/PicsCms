@@ -91,10 +91,16 @@ func ArticleHandler(c *routing.Context) error {
 		pageId = 1
 	}
 
+	totalNum := len(article.Attachs)
+	if pageId > totalNum {
+		return conf.Render.Text(c.Response,
+			http.StatusNotFound, "article page id not found")
+	}
+
 	articleHomeUrl := conf.GenArticleUrl(articleId)
 	pathExt := path.Ext(articleHomeUrl)
 	page := &Page{
-		TotalNum:  len(article.Attachs),
+		TotalNum:  totalNum,
 		CurNum:    pageId,
 		SizeNum:   kRelateArticleNum,
 		UrlPrefix: strings.TrimSuffix(articleHomeUrl, pathExt),
@@ -152,6 +158,12 @@ func CateHandler(c *routing.Context) error {
 		pageId = 1
 	}
 
+	totalNum := totalArticles.SumByCate(cate.Id)/kArticleNumPerPage + 1
+	if pageId > totalNum {
+		return conf.Render.Text(c.Response,
+			http.StatusNotFound, "category page id not found")
+	}
+
 	articles := totalArticles.QueryByCate(cate.Id, (pageId-1)*kArticleNumPerPage, kArticleNumPerPage)
 	if len(articles) == 0 {
 		return conf.Render.Text(c.Response,
@@ -161,7 +173,7 @@ func CateHandler(c *routing.Context) error {
 	cateHomeUrl := conf.GenCateUrl(cateName)
 	pathExt := path.Ext(cateHomeUrl)
 	page := &Page{
-		TotalNum:  totalArticles.SumByCate(cate.Id)/kArticleNumPerPage + 1,
+		TotalNum:  totalNum,
 		CurNum:    pageId,
 		SizeNum:   kArticleNumPerPage,
 		UrlPrefix: strings.TrimSuffix(cateHomeUrl, pathExt),

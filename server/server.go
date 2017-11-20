@@ -33,8 +33,11 @@ func main() {
 	router.Get(`/article-<id:\d+>-<pid:[pn\d]+>.html`, controllers.ArticleHandler)
 	router.Get(`/tags-<tag:[^(.html)\s]+>.html`, controllers.TagsHandler)
 	router.Get(`/tags-<tag:[^-\s]+>-<pid:[pn\d]+>.html`, controllers.TagsHandler)
+	router.Get(`/topic-<tag:[^(.html)\s]+>.html`, controllers.TagsHandler)
+	router.Get(`/topic-<tag:[^-\s]+>-<pid:[pn\d]+>.html`, controllers.TagsHandler)
 
 	// static file
+	router.Get("/favicon.ico", file.Content("./views/v3/img/favicon.ico"))
 	router.Get("/<static:(css|img|js|fonts|attachs)>/*", file.Server(file.PathMap{
 		"/css":     "./views/v3/css",
 		"/img":     "./views/v3/img",

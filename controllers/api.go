@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/go-ozzo/ozzo-routing"
+	"github.com/ikeikeikeike/go-sitemap-generator/stm"
 )
 
 const (
@@ -219,4 +220,48 @@ func TagsHandler(c *routing.Context) error {
 		"tArticles":  totalArticles.MultiQuery(articleIds),
 		"pagination": template.HTML(page.Html()),
 	})
+}
+
+func SiteMapHandler(c *routing.Context) error {
+	sm := stm.NewSitemap()
+	sm.Create()
+	sm.SetDefaultHost(conf.WebUrl())
+
+	sm.Add(stm.URL{"loc": "/", "changefreq": "daily"})
+	cates := totalCates.TotalQuery()
+	for _, cate := range cates {
+		sm.Add(stm.URL{
+			"loc": conf.GenCateUrl(cate.EngName),
+			"changefreq": "daily",
+			"news": stm.URL{
+				"publication": stm.URL{
+					"name":     conf.WebName(),
+					"language": "cn",
+				},
+				"title":    cate.Name,
+				"keywords": cate.Keywords,
+			},
+		})
+	}
+
+	for _, cate := range cates {
+		articles := totalArticles.QueryByCate(cate.Id, 0, 100)
+		for _, article := range articles {
+			sm.Add(stm.URL{
+				"loc": conf.GenArticleUrl(article.Id),
+				"news": stm.URL{
+					"publication": stm.URL{
+						"name":     conf.WebName(),
+						"language": "cn",
+					},
+					"title":            article.Title,
+					"keywords":         article.Keywords,
+					"publication_date": article.PublishTime.Format("2006-01-02"),
+				},
+			})
+		}
+	}
+
+	c.Response.Write(sm.XMLContent())
+	return nil
 }

@@ -38,6 +38,7 @@ func main() {
 	router.Get(`/tags-<tag:[^-\s]+>-<pid:[pn\d]+>.html`, controllers.TagsHandler)
 	router.Get(`/topic-<tag:[^(.html)\s]+>.html`, controllers.TagsHandler)
 	router.Get(`/topic-<tag:[^-\s]+>-<pid:[pn\d]+>.html`, controllers.TagsHandler)
+	router.Get(`/sitemap.xml`, controllers.SiteMapHandler)
 
 	// static file
 	router.Get("/favicon.ico", file.Content("./views/v3/img/favicon.ico"))

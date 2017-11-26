@@ -1,10 +1,10 @@
 package conf
 
 import (
+	"fmt"
 	"html/template"
 	"models"
 	"path/filepath"
-	"fmt"
 
 	"github.com/BurntSushi/toml"
 	"github.com/unrolled/render"
@@ -26,6 +26,7 @@ var Render = render.New(render.Options{
 })
 
 type Config struct {
+	WebUrl            string
 	WebName           string
 	WebKeywords       string
 	WebDesc           string
@@ -40,6 +41,10 @@ func init() {
 		panic(err)
 	}
 	fmt.Println(config)
+}
+
+func WebUrl() string {
+	return config.WebUrl
 }
 
 func WebName() string {

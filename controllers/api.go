@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-ozzo/ozzo-routing"
 	"github.com/ikeikeikeike/go-sitemap-generator/stm"
+	"util"
 )
 
 const (
@@ -59,12 +60,17 @@ func HomeHandler(c *routing.Context) error {
 }
 
 func ArticleHandler(c *routing.Context) error {
+	ip:= util.RealIp(c.Request)
+	ua := c.Request.UserAgent()
+	if NeedAd(ip, ua) {
+		return AdHandler(c)
+	}
+
 	articleId, _ := strconv.Atoi(c.Param("id"))
 	article := totalArticles.SingleQuery(articleId)
 	if article == nil || len(article.Attachs) == 0 {
 		return fmt.Errorf("article not found:%d", articleId)
 	}
-
 	oriPid := c.Param("pid")
 	if oriPid == "p" || oriPid == "n" {
 		// 上一篇或者下一篇
@@ -115,7 +121,7 @@ func ArticleHandler(c *routing.Context) error {
 		"keywords":    article.Keywords,
 		"attachNum":   len(article.Attachs),
 		"pageId":      pageId,
-		"publishTime": article.PublishTime.Format("2006-01-02 15:04"),
+		"publishTime": article.PublishTime.Format("2006-01-02"),
 		"totalCates":  totalCates.TotalQuery(),
 		"cName":       cate.Name,
 		"cEngName":    cate.EngName,
@@ -231,7 +237,7 @@ func SiteMapHandler(c *routing.Context) error {
 	cates := totalCates.TotalQuery()
 	for _, cate := range cates {
 		sm.Add(stm.URL{
-			"loc": conf.GenCateUrl(cate.EngName),
+			"loc":        conf.GenCateUrl(cate.EngName),
 			"changefreq": "daily",
 			"news": stm.URL{
 				"publication": stm.URL{
@@ -264,4 +270,28 @@ func SiteMapHandler(c *routing.Context) error {
 
 	c.Response.Write(sm.XMLContent())
 	return nil
+}
+
+func AdHandler(c *routing.Context) error {
+	articleId, _ := strconv.Atoi(c.Param("id"))
+	article := totalArticles.SingleQuery(articleId)
+	if article == nil {
+		return fmt.Errorf("article not found:%d", articleId)
+	}
+
+	cate := totalCates.SingleQuery(article.Cid)
+	if cate == nil {
+		return fmt.Errorf("category not found: cid:%d", article.Cid)
+	}
+
+	oriUrl := c.Request.URL.String()
+	return conf.Render.HTML(c.Response, http.StatusOK, "ad", map[string]interface{}{
+		"title":      article.Title,
+		"keywords":   article.Keywords,
+		"nextUrl":    oriUrl,
+		"cName":      cate.Name,
+		"cEngName":   cate.EngName,
+		"cid":        99,
+		"totalCates": totalCates.TotalQuery(),
+	})
 }

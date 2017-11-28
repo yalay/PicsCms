@@ -14,7 +14,7 @@
             <div class="main_left" style="width:100%">
                 <div class="item_title">
                     <h1> {{.title}}(<span>{{.pageId}} / {{.attachNum}}</span>)</h1>
-                    <div class="single-cat"><span>分类:</span> <a href="{{cateUrl .cEngName}}" rel="category tag">{{.cName}}</a> / <span>发布于</span>{{.publishTime}}</div>
+                    <div class="single-cat"><span><a href="/">首页</a> / </span> <a href="{{cateUrl .cEngName}}" rel="category tag">{{.cName}}</a> <span>发布于</span>{{.publishTime}} <span style="float: right; color: red">点击图片查看下一页</span></div>
                 </div>
                 <div class="content" id="content">
                     <div class="content_left">

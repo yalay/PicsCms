@@ -153,7 +153,7 @@ hr{margin-top:20px;border:0;border-top:1px solid #eee}
 .item_title h1{color:#333;font-size:22px}
 .item_info{min-height:50px;border-bottom:1px solid #f3f3f3;height:auto;line-height:50px;padding-left:20px;word-spacing:4px;color:#666}
 .item_info span{color:#f66}
-.single-cat,.single-cat a,.single-cat span{color:#999;font-size:13px;margin-top:10px}
+.single-cat {color:#999;font-size:13px;margin-top:10px}
 .post_au{float:right;margin-right:10px}
 .wp-question{margin-left:30px}
 .content{height:auto;overflow:hidden;border-bottom:1px solid #eee;padding-bottom:10px}

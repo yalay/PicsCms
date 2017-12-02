@@ -60,12 +60,6 @@ func HomeHandler(c *routing.Context) error {
 }
 
 func ArticleHandler(c *routing.Context) error {
-	ip:= util.RealIp(c.Request)
-	ua := c.Request.UserAgent()
-	if NeedAd(ip, ua) {
-		return AdHandler(c)
-	}
-
 	articleId, _ := strconv.Atoi(c.Param("id"))
 	article := totalArticles.SingleQuery(articleId)
 	if article == nil || len(article.Attachs) == 0 {
@@ -115,6 +109,13 @@ func ArticleHandler(c *routing.Context) error {
 		UrlSuffix: pathExt,
 	}
 
+	var adCode string
+	var ip = util.RealIp(c.Request)
+	var ua = c.Request.UserAgent()
+	if NeedAd(ip, ua) {
+		adCode = GetAd()
+	}
+
 	return conf.Render.HTML(c.Response, http.StatusOK, "article", map[string]interface{}{
 		"id":          article.Id,
 		"title":       article.Title,
@@ -127,6 +128,7 @@ func ArticleHandler(c *routing.Context) error {
 		"cEngName":    cate.EngName,
 		"cid":         cate.Id,
 		"file":        article.Attachs[pageId-1],
+		"ad":          template.HTML(adCode),
 		"preUrl":      page.PreUrl(),
 		"nextUrl":     page.NextUrl(),
 		"pagination":  template.HTML(page.Html()),

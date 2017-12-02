@@ -17,6 +17,7 @@
                     <div class="single-cat"><span><a href="/">首页</a> / </span> <a href="{{cateUrl .cEngName}}" rel="category tag">{{.cName}}</a> <span>发布于</span>{{.publishTime}} <span style="float: right; color: red">点击图片查看下一页</span></div>
                 </div>
                 <div class="content" id="content">
+                    {{.ad}}
                     <div class="content_left">
                         <a href="{{.preUrl}}" title="上一页" class="pre-cat"><i class="fa fa-chevron-left"></i></a>
                         <a href="{{.nextUrl}}" title="下一页" class="next-cat"><i class="fa fa-chevron-right"></i></a>

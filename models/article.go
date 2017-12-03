@@ -9,6 +9,7 @@ type Article struct {
 	Desc        string
 	Keywords    string
 	Cover       string
+	HCover      string // 横版封面
 	Attachs     []string
 	PublishTime time.Time
 }

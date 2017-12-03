@@ -54,7 +54,7 @@ func HomeHandler(c *routing.Context) error {
 		"webDesc":        conf.WebDesc(),
 		"cid":            0,
 		"totalCates":     cates,
-		"sliderArticles": totalArticles.QueryByCate(2, 0, 5),
+		"sliderArticles": totalArticles.QueryHCoverArticles(2, 0, 5),
 		"cateArticles":   cateArticles,
 	})
 }

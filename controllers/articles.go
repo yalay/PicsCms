@@ -75,6 +75,10 @@ func (t *TotalArticles) TotalSync() {
 
 			conf.Log.Debug("found article:%s", article.Title)
 			article.Cover = filepath.Join(curArticleDirPath, article.Cover)
+			if article.HCover != "" {
+				article.HCover = filepath.Join(curArticleDirPath, article.HCover)
+			}
+
 			article.Attachs = make([]string, 0, len(attachs)-1)
 			for _, attach := range attachs {
 				if attach.IsDir() {
@@ -161,6 +165,36 @@ func (t *TotalArticles) QueryByCate(cateId, startNum, count int) []*models.Artic
 			articleId := articleIds[startNum+i]
 			if article, ok := t.articles[articleId]; ok {
 				articles = append(articles, article)
+			}
+		}
+		return articles
+	}
+}
+
+func (t *TotalArticles) QueryHCoverArticles(cateId, startNum, count int) []*models.Article {
+	if len(t.articles) == 0 || count <= 0 {
+		return nil
+	}
+
+	if articleIds, ok := t.sortedIdsByCate[cateId]; !ok {
+		return nil
+	} else {
+		totalNum := len(articleIds)
+		if totalNum == 0 || startNum > totalNum {
+			return nil
+		}
+
+		articles := make([]*models.Article, 0, count)
+		for i := startNum; i < totalNum; i++ {
+			articleId := articleIds[i]
+			if article, ok := t.articles[articleId]; ok {
+				if article.HCover != "" {
+					articles = append(articles, article)
+				}
+			}
+
+			if len(articles) >= count {
+				break
 			}
 		}
 		return articles

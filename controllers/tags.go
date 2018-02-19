@@ -30,7 +30,7 @@ func (t *TotalTags) Insert(articleId int, keywords string) {
 	t.Lock()
 	for _, curKey := range curKeys {
 		if curArticleIds, ok := t.tagArticleIds[curKey]; ok {
-			curArticleIds = append(curArticleIds, articleId)
+			t.tagArticleIds[curKey] = append(curArticleIds, articleId)
 		} else {
 			t.tagArticleIds[curKey] = []int{articleId}
 		}
